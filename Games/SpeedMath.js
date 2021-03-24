@@ -61,6 +61,51 @@ function FindPlayerWithSocket(servers, serverIndex, socket) {
     return -1;
 }
 
+function SendOutResults(servers, serverIndex, socket) {
+    let toSend = {
+        results: [],
+        winners: []
+    }
+
+    for (let i = 0; i < servers[serverIndex].game.GameSpeedMath.score.length; i++) {
+        const element = servers[serverIndex].game.GameSpeedMath.score[i];
+        console.log(element);
+        if (socket === element.socket) {
+            toSend.results = element.questionResults;
+            console.log(toSend);
+        }
+    }
+
+    let winners = [];
+
+    for (let i = 0; i < servers[serverIndex].game.GameSpeedMath.score.length; i++) {
+        const element = servers[serverIndex].game.GameSpeedMath.score[i];
+        let toPush = {
+            name: element.name,
+            score: element.score,
+            questionResults: element.questionResults
+        }
+        if (winners.length === 0) {
+            winners.push(toPush);
+        } else {
+            if (winners[0].score < element.score) {
+                winners = [];
+                winners.push(toPush);
+            } else if (winners[0].score === element.score) {
+                winners.push(toPush);
+            }
+        }
+    }
+
+    toSend.winners = winners;
+    console.log(toSend);
+    for (let i = 0; i < servers[serverIndex].game.GameSpeedMath.score.length; i++) {
+        const element = servers[serverIndex].game.GameSpeedMath.score[i];
+        toSend.results = element.questionResults;
+        element.socket.emit("GameSpeedMathWinners", toSend);
+    }
+}
+
 methods.StartGame = function(servers, serverIndex, socket, data) {
     console.log(servers[serverIndex]);
     console.log(data);
@@ -116,6 +161,9 @@ methods.SendOutNextQuestion = function(servers, serverIndex, socket, correct) {
                 if (servers[serverIndex].game.GameSpeedMath.hasAnsweredAllQuestions === servers[serverIndex].connections.length) {
                     console.log("EVERY ONE IS DONE");
                     //Everyone has answered every question
+
+                    SendOutResults(servers, serverIndex, socket);
+
                     return;
                 }
 
