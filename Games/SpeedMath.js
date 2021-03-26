@@ -158,6 +158,9 @@ methods.SendOutNextQuestion = function(servers, serverIndex, socket, correct) {
                 servers[serverIndex].game.GameSpeedMath.hasAnsweredAllQuestions += 1;
 
                 console.log("ONE PLAYER IS DONE");
+                console.log(servers[serverIndex].game.GameSpeedMath.hasAnsweredAllQuestions);
+                console.log(servers[serverIndex].connections.length);
+                console.log(servers[serverIndex].game.GameSpeedMath.players.length);
 
                 if (servers[serverIndex].game.GameSpeedMath.hasAnsweredAllQuestions === servers[serverIndex].connections.length) {
                     console.log("EVERY ONE IS DONE");
