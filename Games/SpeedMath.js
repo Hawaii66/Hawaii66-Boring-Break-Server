@@ -102,7 +102,8 @@ function SendOutResults(servers, serverIndex, socket) {
     for (let i = 0; i < servers[serverIndex].game.GameSpeedMath.score.length; i++) {
         const element = servers[serverIndex].game.GameSpeedMath.score[i];
         toSend.results = element.questionResults;
-
+        console.log(toSend);
+        console.log(element);
         element.socket.emit("GameSpeedMathWinners", toSend);
     }
 }
