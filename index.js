@@ -13,6 +13,7 @@ const ServerHelp = require("./HelpFunctions/ServerFunctions.js");
 const HelperFunctions = require("./HelpFunctions/HelpFunctions.js");
 const Game1T2LFunctions = require("./Games/1T2L.js");
 const SpeedMath = require("./Games/SpeedMath.js");
+const SpotifyGuess = require("./Games/SpotifyGuess.js");
 const { Server } = require("http");
 
 let servers = []
@@ -70,6 +71,12 @@ io.sockets.on("connection", (socket) => {
                 score: [], //socket,number,name,{question, correctAnswer, myAnswer}
                 players: [], //socket,currentQuestion
                 hasAnsweredAllQuestions: 0,
+            },
+            GameSpotifyGuess: {
+                songs: [], //name, uri relative rank
+                hasAnsweredAllQuestions: 0,
+                score: [],
+
             }
         }
 
@@ -298,6 +305,14 @@ io.sockets.on("connection", (socket) => {
         console.log(data);
         SpeedMath.data.SubmitAnswer(servers, serverIndex, socket, data);
     });
+
+    /* Spotify Guess */
+    socket.on("GameSpotifyGuessStartGame", (data) => {
+        const pin = currentPin;
+        let serverIndex = ServerHelp.data.FindServerWithPin(servers, pin);
+        console.log(data);
+        SpotifyGuess.data.SpotifyGuessStartGame(servers, serverIndex, socket, data);
+    })
 });
 
 function FindWinners(servers, serverIndex) {
